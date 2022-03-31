@@ -13,8 +13,8 @@ namespace PathCreation.Examples {
         [Header ("Material settings")]
         public Material roadMaterial;
         public Material undersideMaterial;
-        public float textureTiling = 1;
-        public float xTextureTiling = 5;
+        public float textureTiling = 50;
+        public float xTextureTiling = 1;
 
         [SerializeField, HideInInspector]
         GameObject meshHolder;
@@ -54,12 +54,12 @@ namespace PathCreation.Examples {
             bool usePathNormals = !(path.space == PathSpace.xyz && flattenSurface);
 
             for (int i = 0; i < path.NumPoints; i++) {
-                Vector3 localUp = (usePathNormals) ? Vector3.Cross (path.GetTangent (i), path.GetNormal (i)) : path.up;
-                Vector3 localRight = (usePathNormals) ? path.GetNormal (i) : Vector3.Cross (localUp, path.GetTangent (i));
+                Vector3 localRight = (usePathNormals) ? Vector3.Cross (path.GetTangent (i), path.GetNormal (i)) : path.up;
+                Vector3 localUp = (usePathNormals) ? path.GetNormal (i) : Vector3.Cross (localRight, path.GetTangent (i));
 
                 // Find position to left and right of current path vertex
-                Vector3 vertSideA = path.GetPoint (i) - localRight * Mathf.Abs (roadWidth);
-                Vector3 vertSideB = path.GetPoint (i) + localRight * Mathf.Abs (roadWidth);
+                Vector3 vertSideA = path.GetPoint (i) + localRight * Mathf.Abs (roadWidth);
+                Vector3 vertSideB = path.GetPoint (i) - localRight * Mathf.Abs (roadWidth);
 
                 // Add top of road vertices
                 verts[vertIndex + 0] = vertSideA;

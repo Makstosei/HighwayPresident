@@ -23,7 +23,7 @@ public class EventManager : MonoBehaviour
     public static Action onTurnRight;
     public static Action onTurnLeft;
     public static Action onTurnEnded;
-
+    public static Action onHitObstacle;
 
     public void TurnRightEvent()
     {

@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 firstPressPos;
     private Vector2 currentPos;
     private bool stopTouch = false;
+    private float positionx;
 
     private void OnEnable()
     {
@@ -56,7 +57,8 @@ public class PlayerController : MonoBehaviour
                     if (!isMoving)
                     {
                         isMoving = true;
-                        EventManager.Instance.TurnRightEvent();
+                        positionx = Mathf.Clamp(positionx + playerRoadStateManager.sidemovespeed * Time.deltaTime, playerRoadStateManager.maxLeftSideMovement, playerRoadStateManager.maxrightSideMovement);
+                        transform.localPosition = new Vector3(positionx, transform.localPosition.y, 0);
                     }
                 }
                 else if (Distance.x > swipeRange)
@@ -64,7 +66,8 @@ public class PlayerController : MonoBehaviour
                     if (!isMoving)
                     {
                         isMoving = true;
-                        EventManager.Instance.TurnLeftEvent();
+                        positionx = Mathf.Clamp(positionx - playerRoadStateManager.sidemovespeed * Time.deltaTime, playerRoadStateManager.maxLeftSideMovement, playerRoadStateManager.maxrightSideMovement);
+                        transform.localPosition = new Vector3(positionx, transform.localPosition.y, 0);
                     }
                 }
             }
@@ -72,6 +75,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             stopTouch = true;
+            EventManager.Instance.TurnEndedEvent();
         }
     }
 

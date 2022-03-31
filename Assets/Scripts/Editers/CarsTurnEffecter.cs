@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public class CarsTurnEffecter : MonoBehaviour
 {
-    public float maxTurnAngle;
+    public float maxTurnAngle=10;
     private Quaternion originalrotation;
     RoadStateManager roadStateManager;
 
@@ -33,16 +33,14 @@ public class CarsTurnEffecter : MonoBehaviour
 
     void TurnLeftEvent()
     {
-        Vector3 targetvalue = new Vector3(0, 0-maxTurnAngle,0);
+        Vector3 targetvalue = new Vector3(0, -maxTurnAngle,0);
         gameObject.transform.DOBlendableLocalRotateBy(targetvalue , roadStateManager.sidemovespeed).SetEase(Ease.InOutSine);
-        StartCoroutine(AutoRotateCorrect());
     }
 
     void TurnRightEvent()
     {
-        Vector3 targetvalue = new Vector3(0, 0+ maxTurnAngle, 0);
-        gameObject.transform.DOBlendableLocalRotateBy(targetvalue, roadStateManager.sidemovespeed ).SetEase(Ease.InOutSine);
-        StartCoroutine(AutoRotateCorrect());
+        Vector3 targetvalue = new Vector3(0,maxTurnAngle, 0);
+        gameObject.transform.DOBlendableLocalRotateBy(targetvalue, roadStateManager.sidemovespeed).SetEase(Ease.InOutSine);
     }
 
     IEnumerator AutoRotateCorrect()
@@ -55,6 +53,6 @@ public class CarsTurnEffecter : MonoBehaviour
     void TurnEndingEvent()
     {
         Vector3 targetvalue = new Vector3(0, 0, 0);
-        gameObject.transform.DOBlendableLocalRotateBy(targetvalue, roadStateManager.sidemovespeed  ).SetEase(Ease.OutSine);
+        gameObject.transform.DOBlendableLocalRotateBy(targetvalue, roadStateManager.sidemovespeed).SetEase(Ease.OutSine);
     }
 }

@@ -8,6 +8,7 @@ public class RoadStateManager : MonoBehaviour
     public List<GameObject> Roads;
     public int currentline;
     public float sidemovespeed;
+    public float maxLeftSideMovement, maxrightSideMovement;
     public PathCreation.Examples.PathFollower playerPathFollower;
     private GameObject player;
     private float targetz;
@@ -48,18 +49,28 @@ public class RoadStateManager : MonoBehaviour
         {
             case 0:
                 playerPathFollower.pathCreator = Roads[0].GetComponent<PathCreation.PathCreator>();
+                maxLeftSideMovement = 0f;
+                maxrightSideMovement = -3.6f;
                 break;
             case 1:
                 playerPathFollower.pathCreator = Roads[1].GetComponent<PathCreation.PathCreator>();
+                maxLeftSideMovement = 0.9f;
+                maxrightSideMovement = -2.7f;
                 break;
             case 2:
                 playerPathFollower.pathCreator = Roads[2].GetComponent<PathCreation.PathCreator>();
+                maxLeftSideMovement = 1.8f;
+                maxrightSideMovement = -1.8f;
                 break;
             case 3:
                 playerPathFollower.pathCreator = Roads[3].GetComponent<PathCreation.PathCreator>();
+                maxLeftSideMovement = 2.7f;
+                maxrightSideMovement = -0.9f;
                 break;
             case 4:
                 playerPathFollower.pathCreator = Roads[4].GetComponent<PathCreation.PathCreator>();
+                maxLeftSideMovement = 3.6f;
+                maxrightSideMovement = 0f;
                 break;
 
 
@@ -79,11 +90,14 @@ public class RoadStateManager : MonoBehaviour
         }
         else
         {
-            targetz = player.transform.position.z + targetchangevalue;
-            player.transform.DOMoveZ(targetz, sidemovespeed).SetEase(Ease.InOutSine);
+            targetz = player.transform.position.z - targetchangevalue;
+            //player.transform.DOMoveZ(targetz, sidemovespeed).SetEase(Ease.InOutSine);
+            player.transform.DOBlendableMoveBy(new Vector3(Roads[currentline].GetComponent<PathCreation.Examples.PathFollower>().pathCreator.path.GetClosestPointOnPath(player.transform.position).x,
+                                                        Roads[currentline].GetComponent<PathCreation.Examples.PathFollower>().pathCreator.path.GetClosestPointOnPath(player.transform.position).y,
+                                                        targetz), sidemovespeed).SetEase(Ease.InOutSine);
             yield return new WaitForSecondsRealtime(sidemovespeed);
-            EventManager.Instance.TurnEndedEvent();
             currentline = Mathf.RoundToInt(currentline - Time.deltaTime);
+            player.GetComponent<PlayerController>().isMoving = false;
         }
     }
 
@@ -99,10 +113,13 @@ public class RoadStateManager : MonoBehaviour
         else
         {
             targetz = player.transform.position.z + targetchangevalue;
-            player.transform.DOMoveZ(targetz, sidemovespeed).SetEase(Ease.InOutSine);
+            //player.transform.DOMoveZ(targetz, sidemovespeed).SetEase(Ease.InOutSine);
+            player.transform.DOBlendableMoveBy(new Vector3(Roads[currentline].GetComponent<PathCreation.PathCreator>().path.GetClosestPointOnPath(player.transform.position).x,
+                                                           Roads[currentline].GetComponent<PathCreation.PathCreator>().path.GetClosestPointOnPath(player.transform.position).y,
+                                                           targetz), sidemovespeed).SetEase(Ease.InOutSine);
             yield return new WaitForSecondsRealtime(sidemovespeed);
-            EventManager.Instance.TurnEndedEvent();
             currentline = Mathf.RoundToInt(currentline + Time.deltaTime);
+            player.GetComponentInChildren<PlayerController>().isMoving = false;
         }
     }
 
