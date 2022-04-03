@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Camera
   - Environment
+  - Obstacle
+  - Guard
+  - Crashed
   layers:
   - Default
   - TransparentFX

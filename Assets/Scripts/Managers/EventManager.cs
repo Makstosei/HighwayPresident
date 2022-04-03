@@ -20,10 +20,16 @@ public class EventManager : MonoBehaviour
     }
     #endregion
 
+    public static Action onPlayGame;
     public static Action onTurnRight;
     public static Action onTurnLeft;
     public static Action onTurnEnded;
     public static Action onHitObstacle;
+
+    public void PlayGameEvent()
+    {
+        onPlayGame.Invoke();
+    }
 
     public void TurnRightEvent()
     {

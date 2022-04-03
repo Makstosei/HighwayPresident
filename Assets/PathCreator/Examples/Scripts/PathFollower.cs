@@ -11,6 +11,23 @@ namespace PathCreation.Examples
         public float speed = 5;
         public float distanceTravelled;
 
+        private void OnEnable()
+        {
+            EventManager.onTurnLeft += TurnLeftEvent;
+            EventManager.onTurnRight += TurnRightEvent;
+            EventManager.onTurnEnded += TurnEndingEvent;
+            EventManager.onPlayGame += PlayGameEvent;
+        }
+
+        private void OnDisable()
+        {
+            EventManager.onTurnLeft -= TurnLeftEvent;
+            EventManager.onTurnRight -= TurnRightEvent;
+            EventManager.onTurnEnded -= TurnEndingEvent;
+            EventManager.onPlayGame -= PlayGameEvent;
+        }
+
+
         void Start()
         {
             if (pathCreator != null)
@@ -36,5 +53,31 @@ namespace PathCreation.Examples
         {
             distanceTravelled = pathCreator.path.GetClosestDistanceAlongPath(transform.position);
         }
+
+        void PlayGameEvent()
+        {
+            speed = 4;
+        }
+
+
+        void TurnLeftEvent()
+        {
+            speed = 3;
+        }
+
+        void TurnRightEvent()
+        {
+            speed = 3;
+
+        }
+
+        void TurnEndingEvent()
+        {
+            speed = 4;
+        }
     }
+
+
+  
+
 }

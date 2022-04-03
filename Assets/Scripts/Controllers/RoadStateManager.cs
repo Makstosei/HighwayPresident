@@ -29,12 +29,14 @@ public class RoadStateManager : MonoBehaviour
         EventManager.onTurnRight -= turnRightEvent;
         EventManager.onTurnEnded -= turnEndingEvent;
     }
+   
 
     void Start()
     {
         currentline = 2;
         playerPathFollower = GameObject.Find("Player").GetComponent<PathCreation.Examples.PathFollower>();
         player = GameObject.Find("Player");
+        CurrentLine();
     }
 
     void Update()
@@ -87,17 +89,16 @@ public class RoadStateManager : MonoBehaviour
         if (currentline-- <= -1)
         {
             currentline = 0;
+            EventManager.Instance.TurnEndedEvent();
+
         }
         else
         {
-            targetz = player.transform.position.z - targetchangevalue;
-            //player.transform.DOMoveZ(targetz, sidemovespeed).SetEase(Ease.InOutSine);
-            player.transform.DOBlendableMoveBy(new Vector3(Roads[currentline].GetComponent<PathCreation.Examples.PathFollower>().pathCreator.path.GetClosestPointOnPath(player.transform.position).x,
-                                                        Roads[currentline].GetComponent<PathCreation.Examples.PathFollower>().pathCreator.path.GetClosestPointOnPath(player.transform.position).y,
-                                                        targetz), sidemovespeed).SetEase(Ease.InOutSine);
+            targetz = player.transform.localPosition.z + targetchangevalue;
+            player.transform.DOLocalMoveZ(targetz, sidemovespeed).SetEase(Ease.Linear);
             yield return new WaitForSecondsRealtime(sidemovespeed);
             currentline = Mathf.RoundToInt(currentline - Time.deltaTime);
-            player.GetComponent<PlayerController>().isMoving = false;
+            EventManager.Instance.TurnEndedEvent();
         }
     }
 
@@ -106,20 +107,20 @@ public class RoadStateManager : MonoBehaviour
         ismoving = true;
         targetchangevalue = -0.9f;
         yield return new WaitForSecondsRealtime(0.1f);
-        if (currentline++ >= Roads.Count)
+        if (currentline++ >= Roads.Count-1)
         {
             currentline = Roads.Count - 1;
+            EventManager.Instance.TurnEndedEvent();
+
         }
         else
         {
-            targetz = player.transform.position.z + targetchangevalue;
-            //player.transform.DOMoveZ(targetz, sidemovespeed).SetEase(Ease.InOutSine);
-            player.transform.DOBlendableMoveBy(new Vector3(Roads[currentline].GetComponent<PathCreation.PathCreator>().path.GetClosestPointOnPath(player.transform.position).x,
-                                                           Roads[currentline].GetComponent<PathCreation.PathCreator>().path.GetClosestPointOnPath(player.transform.position).y,
-                                                           targetz), sidemovespeed).SetEase(Ease.InOutSine);
+            targetz = player.transform.localPosition.z + targetchangevalue;
+            player.transform.DOLocalMoveZ(targetz, sidemovespeed).SetEase(Ease.Linear);
             yield return new WaitForSecondsRealtime(sidemovespeed);
             currentline = Mathf.RoundToInt(currentline + Time.deltaTime);
-            player.GetComponentInChildren<PlayerController>().isMoving = false;
+            EventManager.Instance.TurnEndedEvent();
+
         }
     }
 
@@ -131,15 +132,22 @@ public class RoadStateManager : MonoBehaviour
 
     void turnRightEvent()
     {
-        StartCoroutine(MoveRightRoutine());
+        if (!ismoving)
+        {
+            StartCoroutine(MoveRightRoutine());
+        }
     }
 
 
     void turnLeftEvent()
     {
-        StartCoroutine(MoveleftRoutine());
+        if (!ismoving)
+        {
+            StartCoroutine(MoveleftRoutine());
+        }
     }
 
 
 
 }
+

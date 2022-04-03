@@ -44,6 +44,7 @@ public class PlayerController : MonoBehaviour
         {
             stopTouch = false;
             firstPressPos = Input.mousePosition;
+            EventManager.Instance.PlayGameEvent();
         }
 
         if (Input.GetMouseButton(0))
@@ -54,20 +55,20 @@ public class PlayerController : MonoBehaviour
             {
                 if (Distance.x < -swipeRange)
                 {
-                    if (!isMoving)
+                    if (!isMoving&&playerRoadStateManager.currentline<playerRoadStateManager.Roads.Count-1 && playerRoadStateManager.Roads[playerRoadStateManager.currentline].GetComponent<RoadCanRotateController>().canRotateRight)
                     {
                         isMoving = true;
-                        positionx = Mathf.Clamp(positionx + playerRoadStateManager.sidemovespeed * Time.deltaTime, playerRoadStateManager.maxLeftSideMovement, playerRoadStateManager.maxrightSideMovement);
-                        transform.localPosition = new Vector3(positionx, transform.localPosition.y, 0);
+                        EventManager.Instance.TurnRightEvent();
+
                     }
                 }
                 else if (Distance.x > swipeRange)
                 {
-                    if (!isMoving)
+                    if (!isMoving&&playerRoadStateManager.currentline>0&&playerRoadStateManager.Roads[playerRoadStateManager.currentline].GetComponent<RoadCanRotateController>().canRotateLeft)
                     {
                         isMoving = true;
-                        positionx = Mathf.Clamp(positionx - playerRoadStateManager.sidemovespeed * Time.deltaTime, playerRoadStateManager.maxLeftSideMovement, playerRoadStateManager.maxrightSideMovement);
-                        transform.localPosition = new Vector3(positionx, transform.localPosition.y, 0);
+                        EventManager.Instance.TurnLeftEvent();
+
                     }
                 }
             }
@@ -75,11 +76,9 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             stopTouch = true;
-            EventManager.Instance.TurnEndedEvent();
         }
     }
-
-
+ 
 
     void TurnEndingEvent()
     {
